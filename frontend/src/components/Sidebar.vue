@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import { markRaw } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { ChartNoAxesGantt, LayoutDashboard, LogOut } from 'lucide-vue-next'
+
+defineProps<{
+  isCollapsed: boolean
+}>()
+
+const router = useRouter()
+const route = useRoute() // Lấy pathname hiện tại
+
+// Khai báo Menu (Dùng markRaw để Vue không biến Component thành dữ liệu phản ứng)
+const menuItems = [
+  { icon: markRaw(LayoutDashboard), label: 'Tổng quan', path: '/' },
+  { icon: markRaw(ChartNoAxesGantt), label: 'Products', path: '/products' },
+]
+</script>
+
 <template>
   <aside
     :class="`bg-white shadow-2xl transition-all duration-300 flex flex-col z-20 ${
@@ -16,16 +35,15 @@
             : 'bg-white text-black border-black hover:bg-green-100 shadow-xl',
         ]"
       >
-        <span class="min-w-[28px] flex justify-center"
-          ><component :is="item.icon" :size="28"
-        /></span>
+        <span class="min-w-[28px] flex justify-center">
+          <component :is="item.icon" :size="28" />
+        </span>
         <span v-if="!isCollapsed" class="truncate whitespace-nowrap">{{ item.label }}</span>
       </button>
     </nav>
 
     <div class="p-3 bg-white shadow-2xl border-t-2 border-gray-400">
       <button
-        @click="handleLogout"
         class="w-full flex items-center gap-3 p-2 bg-green-600 text-white font-bold text-sm hover:bg-green-800 rounded-lg transition-all justify-center active:translate-y-0.5 active:shadow-none"
       >
         <LogOut :size="22" />
@@ -34,28 +52,3 @@
     </div>
   </aside>
 </template>
-
-<script setup lang="ts">
-import { markRaw } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { Calendar, LayoutDashboard, LogOut } from 'lucide-vue-next'
-
-defineProps<{
-  isCollapsed: boolean
-}>()
-
-const router = useRouter()
-const route = useRoute() // Lấy pathname hiện tại
-
-const handleLogout = () => {
-  const isConfirmed = confirm('Bạn có chắc chắn muốn đăng xuất tài khoản không?')
-  if (!isConfirmed) return
-  alert('Đã đăng xuất! (Mock)')
-}
-
-// Khai báo Menu (Dùng markRaw để Vue không biến Component thành dữ liệu phản ứng)
-const menuItems = [
-  { icon: markRaw(LayoutDashboard), label: 'Tổng quan', path: '/' },
-  { icon: markRaw(Calendar), label: 'Products', path: '/views/ProductsViews' },
-]
-</script>

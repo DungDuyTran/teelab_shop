@@ -5,13 +5,13 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'dashboard',
-      component: () => import('../views/DashboardView.vue'), // Sẽ báo lỗi đỏ xíu nếu bạn chưa tạo file này, không sao cả
+      name: 'home',
+      component: () => import('@/views/HomeView.vue'), // Trang chủ 3D
     },
     {
-      path: '/products',
+      path: '/products', // Đổi từ /cars thành /products cho khớp với URL
       name: 'products',
-      component: () => import('../views/ProductsViews.vue'), // Gọi đúng file của bạn
+      component: () => import('@/views/CarManagementView.vue'),
     },
   ],
 })
