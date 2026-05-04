@@ -1,7 +1,5 @@
 package com.example.demo.exception;
 
-import com.example.demo.entity.Product;
-
 public enum ErrorCode {
     PRODUCT_NOT_FOUND(1001,"Sản phẩm không tồn tại"),
         CATEGORY_NOT_FOUND(1002,"Danh mục không tồn tại");

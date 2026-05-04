@@ -1,11 +1,20 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useCarStore } from '@/stores/carStore'
 import { useCar } from '@/composables/useCar'
+import { useSWR } from '@/services/useSWR'
 import type { CarResponse } from '@/types/car'
-
+// ĐIỀU KHIỂN GIAO DIỆN và ra lệnh cho useSWR và useCar làm việc.
 export function useCarManagement() {
   const carStore = useCarStore()
-  const { cars, isLoading, deleteCar, createCar, updateCar, uploadModel, uploadImage } = useCar()
+
+  // 1. CHỈ LẤY CÁC HÀM HÀNH ĐỘNG TỪ USECAR
+  const { deleteCar: apiDeleteCar, createCar, updateCar, uploadModel, uploadImage } = useCar()
+
+  // 2. SỬ DỤNG USE_SWR ĐỂ QUẢN LÝ DANH SÁCH VÀ LOADING
+  const { data: rawCars, isLoading, mutate: fetchCars } = useSWR<CarResponse[]>('/cars')
+
+  // Dùng computed để tránh lỗi UI khi data chưa kịp trả về (bằng null)
+  const cars = computed(() => rawCars.value || [])
 
   const isShowroomVisible = ref(false)
 
@@ -39,7 +48,6 @@ export function useCarManagement() {
 
   const selectedFile = ref<File | null>(null)
   const selectedFileName = ref('')
-
   const selectedImgFile = ref<File | null>(null)
   const selectedImgName = ref('')
 
@@ -100,25 +108,31 @@ export function useCarManagement() {
     resetFileState()
   }
 
+  // Hàm xóa có bọc thêm mutate để refresh bảng
+  const deleteCar = async (id: number) => {
+    const success = await apiDeleteCar(id)
+    if (success) {
+      fetchCars() // Gọi SWR để load lại dữ liệu mới nhất
+    }
+  }
+
   const submitForm = async (submittedData: any) => {
     try {
       let finalModelUrl = submittedData.modelUrl
       let finalImageUrl = submittedData.imageUrl
 
-      // ✅ GIỮ LINK CŨ NẾU KHÔNG UPLOAD
+      // GIỮ LINK CŨ NẾU KHÔNG UPLOAD
       if (!selectedFile.value && isEditing.value) {
         finalModelUrl = formData.value.modelUrl
       }
-
       if (!selectedImgFile.value && isEditing.value) {
         finalImageUrl = formData.value.imageUrl
       }
 
-      // ✅ UPLOAD MỚI
+      // UPLOAD MỚI
       if (selectedFile.value) {
         finalModelUrl = await uploadModel(selectedFile.value)
       }
-
       if (selectedImgFile.value) {
         finalImageUrl = await uploadImage(selectedImgFile.value)
       }
@@ -129,27 +143,26 @@ export function useCarManagement() {
         imageUrl: finalImageUrl,
       }
 
-      console.log('PAYLOAD:', payload)
-
       if (isEditing.value && currentEditId.value) {
         await updateCar(currentEditId.value, payload)
-        alert('✅ Cập nhật thành công')
+        alert('Cập nhật thành công')
       } else {
         await createCar(payload)
-        alert('✅ Thêm xe thành công')
+        alert('Thêm xe thành công')
       }
 
       closeForm()
+      fetchCars() // Gọi SWR để load lại bảng sau khi thêm/sửa
     } catch (error) {
       console.error(error)
-      alert('❌ Lưu thất bại - kiểm tra console')
+      alert('Lưu thất bại - kiểm tra console')
     }
   }
 
   return {
     cars,
     isLoading,
-    deleteCar,
+    deleteCar, // Dùng hàm deleteCar mới có bọc fetchCars
     carStore,
     isShowroomVisible,
     view3D,

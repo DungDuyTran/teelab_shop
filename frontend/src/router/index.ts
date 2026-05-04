@@ -7,11 +7,11 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('@/views/client/HomeView.vue'), // Trang chủ khách
+      component: () => import('@/views/client/HomeView.vue'),
     },
     {
       path: '/admin',
-      component: AdminLayout, // Sử dụng AdminLayout làm khung
+      component: AdminLayout,
       children: [
         {
           path: 'products',

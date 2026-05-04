@@ -1,7 +1,7 @@
 package com.example.demo.service.Impl;
 
-import com.example.demo.dto.reponse.CategoryResponse;
 import com.example.demo.dto.request.CategoryRequest;
+import com.example.demo.dto.response.CategoryResponse;
 import com.example.demo.entity.Category;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.service.CategoryService;
@@ -23,21 +23,24 @@ public class CategoryServiceImpl extends BaseServiceImpl<Category, Long, Categor
 
     @Override
     protected CategoryResponse mapToResponse(Category entity) {
-        CategoryResponse res = new CategoryResponse();
-        res.setId(entity.getId());
-        res.setName(entity.getName());
-        return res;
+        return CategoryResponse.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .build();
     }
 
     @Override
     protected Category mapToEntity(CategoryRequest request) {
-        Category category = new Category();
-        category.setName(request.getName());
-        return category;
+        return Category.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .build();
     }
 
     @Override
     protected void updateEntity(CategoryRequest request, Category entity) {
         entity.setName(request.getName());
+        entity.setDescription(request.getDescription());
     }
 }

@@ -7,7 +7,7 @@ const emit = defineEmits(['open-add'])
 <template>
   <div class="flex justify-between items-end mb-8">
     <div>
-      <h1 class="text-3xl font-bold uppercase tracking-tight text-white">
+      <h1 class="text-5xl font-bold uppercase tracking-tight text-white">
         Quản lý <span class="text-red-600">Sản phẩm</span>
       </h1>
       <p class="text-[#a1a1aa] text-sm mt-2 uppercase font-semibold tracking-wider italic">

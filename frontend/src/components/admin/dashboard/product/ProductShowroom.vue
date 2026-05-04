@@ -13,7 +13,7 @@ const emit = defineEmits(['close'])
 
 <template>
   <Teleport to="body">
-    <!-- destroy toàn bộ popup -->
+    <!-- toàn bộ popup -->
     <div v-if="isVisible" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <!-- overlay -->
       <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="emit('close')"></div>
